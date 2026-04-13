@@ -1,6 +1,6 @@
 # TODO アプリ
 
-フロントエンドとバックエンドを分離し、Todo を CRUD API 経由で操作する構成に変更しました。
+フロントエンドとバックエンドを分離し、Todo を CRUD API 経由で操作する構成です。バックエンドの保存先には SQLite を使います。
 
 ## 構成
 
@@ -25,6 +25,12 @@ todo-example/
 - `POST /api/todos` : Todo 追加
 - `PUT /api/todos/:id` : Todo 更新
 - `DELETE /api/todos/:id` : Todo 削除
+
+## データ保存
+
+- 実行時の Todo データは `backend/todos.sqlite` に保存されます
+- SQLite の初期テーブル作成はアプリ起動時に自動で行われます
+- 初回起動時のみサンプル Todo を投入します
 
 ## 実行方法
 
