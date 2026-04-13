@@ -2,6 +2,7 @@
   "name": "todo-example",
   "private": true,
   "scripts": {
+    "start": "node backend/server.js",
     "test": "node --test"
   }
 }

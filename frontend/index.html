@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO リスト</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="app-shell">
+        <section class="hero">
+            <p class="eyebrow">Frontend</p>
+            <h1>TODO リスト</h1>
+            <p class="lead">バックエンドの CRUD API と通信して TODO を管理します。</p>
+        </section>
+
+        <section class="panel">
+            <form id="todo-form" class="composer">
+                <input type="text" id="new-todo-input" placeholder="新しい TODO を入力してください" />
+                <button type="submit" class="add-btn">TODO 追加</button>
+            </form>
+            <p id="status-message" class="status-message" aria-live="polite"></p>
+            <div id="todo-list" class="todo-list"></div>
+        </section>
+    </main>
+    <script src="/script.js"></script>
+</body>
+</html>
