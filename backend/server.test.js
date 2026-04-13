@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { Readable, Writable } = require('node:stream');
 const { createRequestListener } = require('./server');
+const { createTodoStore } = require('./todoStore');
 
 async function requestJson(listener, method, path, body) {
     const payload = body ? JSON.stringify(body) : '';
@@ -68,7 +69,12 @@ async function requestJson(listener, method, path, body) {
 }
 
 test('CRUD API works end-to-end', async () => {
-    const listener = createRequestListener();
+    const store = createTodoStore({
+        seedTodos: [
+            { text: 'seed task', completed: false }
+        ]
+    });
+    const listener = createRequestListener({ store });
 
     const initial = await requestJson(listener, 'GET', '/api/todos');
     assert.equal(initial.statusCode, 200);
@@ -92,4 +98,17 @@ test('CRUD API works end-to-end', async () => {
     const deleted = await requestJson(listener, 'DELETE', `/api/todos/${created.body.todo.id}`);
     assert.equal(deleted.statusCode, 204);
     assert.equal(deleted.body, null);
+
+    store.close();
+});
+
+test('POST returns 400 when text is blank', async () => {
+    const store = createTodoStore();
+    const listener = createRequestListener({ store });
+    const response = await requestJson(listener, 'POST', '/api/todos', { text: '   ' });
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.message, 'text is required');
+
+    store.close();
 });
