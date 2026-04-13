@@ -5,12 +5,17 @@ const { URL } = require('node:url');
 const { createTodoStore } = require('./todoStore');
 
 const frontendDir = path.join(__dirname, '..', 'frontend');
+const defaultDatabasePath = path.join(__dirname, 'todos.sqlite');
+const defaultSeedTodos = [
+    { text: 'APIでTODOを追加する', completed: false },
+    { text: 'フロントとバックエンドを分ける', completed: true }
+];
 
-function createRequestListener() {
-    const store = createTodoStore([
-        { text: 'APIでTODOを追加する', completed: false },
-        { text: 'フロントとバックエンドを分ける', completed: true }
-    ]);
+function createRequestListener(options = {}) {
+    const store = options.store || createTodoStore({
+        databasePath: options.databasePath || defaultDatabasePath,
+        seedTodos: options.seedTodos || defaultSeedTodos
+    });
 
     return async (req, res) => {
         const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
