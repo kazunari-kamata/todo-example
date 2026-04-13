@@ -1,4 +1,4 @@
-# 🎉 Hello World アプリ 最終課題
+# 🎉 TODO アプリ 最終課題
 
 HTML、CSS、JavaScript で構成された Web ベースの TODO リストアプリです。**localStorage** を利用して、タスクをブラウザ内に保存できます。
 
@@ -13,10 +13,13 @@ HTML、CSS、JavaScript で構成された Web ベースの TODO リストアプ
 ## 📁 プロジェクト構成
 
 ```
-hello-world/
+todo-example/
 ├── index.html      # メインの HTML 構造
 ├── style.css       # スタイルとアニメーション
+├── todoLogic.js    # TODO 操作用のロジック
 ├── script.js       # コア機能と localStorage 処理
+├── script.test.js  # Node.js 組み込みテスト
+├── package.json    # テスト実行設定
 └── README.md       # このファイル
 ```
 
@@ -36,6 +39,16 @@ php -S localhost:8000
 ```
 
 アプリは `http://localhost:8000` で利用できます。
+
+## ✅ テスト実行
+
+Node.js が入っていれば、以下でテストを実行できます。
+
+```bash
+npm test
+```
+
+`todoLogic.js` に切り出した TODO の追加、完了切り替え、削除、空データ除外を検証しています。
 
 ## 🎨 UI デザインの特徴
 
@@ -88,4 +101,4 @@ const todos = [
 
 ---
 
-Hello World Team が作成しました。
+TODO Team が作成しました。

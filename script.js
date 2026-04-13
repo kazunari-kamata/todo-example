@@ -4,6 +4,7 @@
 const todoList = document.getElementById('todo-list');
 const addBtn = document.querySelector('.add-btn');
 const todoInput = document.getElementById('new-todo-input');
+const { sanitizeTodos, addTodoItem, toggleTodoAt, removeTodoAt } = window.TodoLogic;
 
 // localStorage に保存する際のキー
 const STORAGE_KEY = 'todo_list_data';
@@ -11,7 +12,7 @@ const STORAGE_KEY = 'todo_list_data';
 // localStorage から TODO データを取得
 function loadTodos() {
     const todos = localStorage.getItem(STORAGE_KEY);
-    return todos ? JSON.parse(todos) : [];
+    return todos ? sanitizeTodos(JSON.parse(todos)) : [];
 }
 
 // TODO データを localStorage に保存
@@ -24,7 +25,7 @@ function renderTodos() {
     const todos = loadTodos();
     todoList.innerHTML = '';
     
-    todos.forEach(todo => {
+    todos.forEach((todo, index) => {
         const item = document.createElement('div');
         item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
         
@@ -38,22 +39,22 @@ function renderTodos() {
         const deleteBtn = item.querySelector('.delete-btn');
         
         checkBtn.addEventListener('click', () => {
-            todo.completed = !todo.completed;
+            const nextTodos = toggleTodoAt(todos, index);
+            saveTodos(nextTodos);
             renderTodos();
-            saveTodos(todos.filter(t => t.text !== '')); // 空の TODO は除外する
         });
         
         deleteBtn.addEventListener('click', () => {
-            todoList.removeChild(item);
-            // 対象の TODO を localStorage から削除
-            saveTodos(todos.filter(t => t.text !== todo.text));
+            const nextTodos = removeTodoAt(todos, index);
+            saveTodos(nextTodos);
+            renderTodos();
         });
         
         todoList.appendChild(item);
     });
     
     // 空の TODO が保存されないようにする
-    const remainingTodos = todos.filter(t => t.text !== '');
+    const remainingTodos = sanitizeTodos(todos);
     saveTodos(remainingTodos);
 }
 
@@ -66,18 +67,13 @@ function escapeHtml(text) {
 
 // 新しい TODO を追加
 function addTodo() {
-    const text = todoInput.value.trim();
-    
-    if (text === '') return;
-    
     const todos = loadTodos();
-    todos.push({
-        text: text,
-        completed: false
-    });
+    const nextTodos = addTodoItem(todos, todoInput.value);
+
+    if (nextTodos === todos) return;
     
     todoInput.value = '';
-    saveTodos(todos);
+    saveTodos(nextTodos);
     renderTodos();
 }
 
