@@ -1,2 +1,8 @@
 backend/todos.sqlite
 backend/todos.playwright.sqlite
+!.codex/
+!.codex/skills/
+!.codex/skills/github-review-workflow/
+!.codex/skills/github-review-workflow/SKILL.md
+!.codex/skills/github-review-workflow/references/
+!.codex/skills/github-review-workflow/references/branch-protection.md
