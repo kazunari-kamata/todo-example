@@ -2,19 +2,19 @@
 
 ## Repo-Local Skill
 
-This repository includes a repo-local skill at `.codex/skills/github-review-workflow/`.
+このリポジトリには repo-local skill として `.codex/skills/github-review-workflow/` があります。
 
-Use `$github-review-workflow` when working on:
+次の作業では `$github-review-workflow` を使ってください。
 
-- GitHub Actions workflow changes
-- README updates related to CI or review settings
-- `gitleaks` hook setup
-- `.github/CODEOWNERS` changes
-- pull request creation and GitHub check inspection
-- branch protection alignment
+- GitHub Actions workflow の追加や修正
+- CI や review 設定に合わせた README 更新
+- `gitleaks` hook の設定や修正
+- `.github/CODEOWNERS` の追加や更新
+- pull request 作成と GitHub checks の確認
+- branch protection の整合調整
 
 ## Notes
 
-- Check tracked workflow files with `git ls-tree --name-only -r HEAD .github/workflows`.
-- If a file exists locally but is missing from Git status, verify ignore rules with `git check-ignore -v <path>`.
-- In this environment, hidden paths such as `.github/...` and `.codex/...` may require `git add -f`.
+- 追跡されている workflow は `git ls-tree --name-only -r HEAD .github/workflows` で確認します。
+- ローカルにあるファイルが `git status` に出ない場合は `git check-ignore -v <path>` で ignore 設定を確認します。
+- この環境では `.github/...` や `.codex/...` のような hidden path に `git add -f` が必要になることがあります。
