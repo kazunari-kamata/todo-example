@@ -174,3 +174,14 @@ GitHub Actions でも `.github/workflows/secret-scan.yml` により、`push` と
 - `npm run test:e2e`
 
 Node.js は `22` を使い、Playwright 用の Chromium も GitHub Actions 上で自動インストールします。
+
+## コードレビュー設定
+
+`main` ブランチでは、GitHub の branch protection により次を要求する運用にしています。
+
+- pull request での変更
+- 1 件以上の承認レビュー
+- 未解決レビュー会話の解消
+- `gitleaks` と `test` の GitHub Actions 成功
+
+加えて [`.github/CODEOWNERS`](/Users/oyoguhito/github/kazunari-kamata/todo-example/.github/CODEOWNERS) により、主要ディレクトリの変更は code owner のレビュー対象になります。
