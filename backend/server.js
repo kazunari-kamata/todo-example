@@ -30,7 +30,9 @@ function createRequestListener(options = {}) {
 }
 
 function createServer() {
-    return http.createServer(createRequestListener());
+    return http.createServer(createRequestListener({
+        databasePath: process.env.TODO_DATABASE_PATH || defaultDatabasePath
+    }));
 }
 
 async function handleApiRequest(req, res, requestUrl, store) {

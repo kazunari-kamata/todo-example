@@ -1,1 +1,2 @@
 backend/todos.sqlite
+backend/todos.playwright.sqlite
