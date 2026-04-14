@@ -2,11 +2,15 @@
 
 set -euo pipefail
 
-if ! command -v gitleaks >/dev/null 2>&1; then
+GITLEAKS_BIN="${PWD}/.tools/bin/gitleaks"
+
+if command -v gitleaks >/dev/null 2>&1; then
+    GITLEAKS_BIN="$(command -v gitleaks)"
+elif [ ! -x "${GITLEAKS_BIN}" ]; then
     echo "gitleaks が見つかりません。secret scan を実行するには gitleaks をインストールしてください。" >&2
     echo "https://github.com/gitleaks/gitleaks を参照してください。" >&2
     exit 1
 fi
 
 echo "staged changes を secret scan しています..."
-gitleaks protect --staged --redact --no-banner
+"${GITLEAKS_BIN}" protect --staged --redact --no-banner
