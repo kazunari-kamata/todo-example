@@ -1,8 +1,12 @@
 {
   "name": "todo-example",
   "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  },
   "scripts": {
     "start": "node backend/server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "test:e2e": "playwright test"
   }
 }

@@ -135,3 +135,9 @@ npm test
 ```
 
 `todoStore` の単体テストと、CRUD API の疎通テストを実行します。
+
+Playwright を使った E2E テストは次のコマンドで実行できます。
+
+```bash
+npm run test:e2e
+```
