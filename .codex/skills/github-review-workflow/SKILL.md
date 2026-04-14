@@ -1,80 +1,81 @@
 ---
 name: github-review-workflow
-description: Use when this repository needs GitHub Actions setup or repair, README synchronization, gitleaks hook support, CODEOWNERS updates, PR creation, and branch protection alignment.
+description: このリポジトリで GitHub Actions の追加や修正、README 同期、gitleaks hook 対応、CODEOWNERS 更新、PR 作成、branch protection の整合調整が必要なときに使います。
 ---
 
 # GitHub Review Workflow
 
 ## Overview
 
-This repo-local skill is a checklist for repeatable GitHub workflow changes in this repository. Use it when code changes also require CI, documentation, PR, or review-policy work.
+この repo-local skill は、このリポジトリで繰り返し発生する GitHub 運用変更のチェックリストです。コード修正だけでなく、CI、ドキュメント、PR、保護設定の見直しが絡む作業で使います。
 
-## Use This Skill For
+## この Skill を使う場面
 
-- Adding or fixing `.github/workflows/*.yml`
-- Updating README after CI or review-policy changes
-- Making `gitleaks`-based pre-commit checks usable locally
-- Adding or updating `.github/CODEOWNERS`
-- Creating PRs and checking GitHub Actions status
-- Aligning branch protection with the checks that actually exist
+- `.github/workflows/*.yml` の追加や修正
+- CI や review 設定変更に合わせた README 更新
+- `gitleaks` を使う pre-commit check のローカル整備
+- `.github/CODEOWNERS` の追加や更新
+- PR 作成と GitHub Actions 状態確認
+- 実在する checks に合わせた branch protection の調整
 
 ## Workflow
 
-1. Inspect current state first.
-   - Check `git status --short --branch`.
-   - Check which workflow files are tracked with `git ls-tree --name-only -r HEAD .github/workflows`.
-   - Read `README.md`, `package.json`, and existing workflow files before editing.
-   - For this repo, also check `playwright.config.js`, `tests/`, and `backend/*.test.js`.
+1. まず現状を確認する。
+   - `git status --short --branch` を確認します。
+   - `git ls-tree --name-only -r HEAD .github/workflows` で追跡中の workflow を確認します。
+   - 編集前に `README.md`、`package.json`、既存 workflow を読みます。
+   - この repo では `playwright.config.js`、`tests/`、`backend/*.test.js` も確認します。
 
-2. Treat local files and tracked files as different things.
-   - If a workflow exists locally but not on GitHub, verify with `git check-ignore -v <path>`.
-   - In this environment, global git ignore rules may hide `.github/...` files.
-   - If needed, use `git add -f` for `.github/workflows/test.yml` or `.github/CODEOWNERS`.
+2. ローカルにあることと Git 管理されていることを分けて考える。
+   - ローカルにはあるのに GitHub に無い workflow は `git check-ignore -v <path>` で確認します。
+   - この環境では global ignore により `.github/...` が見落とされることがあります。
+   - 必要なら `.github/workflows/test.yml` や `.github/CODEOWNERS` を `git add -f` します。
 
-3. Keep docs aligned with the repo.
-   - Update README structure listings when files or directories are added.
-   - Add a short section for GitHub Actions behavior.
-   - Add a short section for review policy when CODEOWNERS or branch protection changes.
+3. ドキュメントを repo の実態に合わせる。
+   - ファイルやディレクトリ追加時は README の構成一覧を更新します。
+   - GitHub Actions の挙動を短く説明する節を追加します。
+   - CODEOWNERS や branch protection を変えたら運用説明も更新します。
 
-4. Validate before commit.
-   - Run local tests when feasible.
-   - For browser tests, distinguish real failures from sandbox port restrictions.
-   - Run `gitleaks protect --staged --redact --no-banner` before commit.
-   - In this repo, the expected local checks are usually `npm test` and `npm run test:e2e`.
+4. commit 前に検証する。
+   - 実行可能なローカルテストを回します。
+   - ブラウザテストはアプリ不具合と sandbox 制約を分けて考えます。
+   - `gitleaks protect --staged --redact --no-banner` を実行します。
+   - この repo では通常 `npm test` と `npm run test:e2e` を想定します。
 
-5. Prefer resilient local secret scanning.
-   - Inspect `.githooks/pre-commit` and `git config --get core.hooksPath`.
-   - If `gitleaks` is not globally installed, support a repo-local binary such as `.tools/bin/gitleaks`.
+5. secret scan はローカルでも継続できる形を優先する。
+   - `.githooks/pre-commit` と `git config --get core.hooksPath` を確認します。
+   - `gitleaks` がグローバルに無ければ `.tools/bin/gitleaks` のような repo-local バイナリを使えるようにします。
 
-6. Only require checks that GitHub can already see.
-   - Confirm workflows with `gh workflow list`.
-   - Confirm PR checks with `gh pr checks <pr>` or `gh pr view <pr> --json statusCheckRollup`.
-   - Do not require a check name in branch protection until it has run on GitHub.
+6. GitHub が認識している check だけを必須化する。
+   - `gh workflow list` で workflow を確認します。
+   - `gh pr checks <pr>` や `gh pr view <pr> --json statusCheckRollup` で PR checks を確認します。
+   - 実行実績のない check 名を branch protection に要求しません。
 
-7. Handle bootstrap PRs carefully.
-   - If review rules block the PR that introduces review infrastructure, a temporary relaxation may be needed.
-   - Restore the stricter branch protection immediately after merge.
+7. この repo では review 必須を恒久的に要求しない。
+   - branch protection は required checks を中心に組みます。
+   - `required_pull_request_reviews` は恒久的に `null` を前提にします。
+   - review 運用は任意で行い、merge blocker にはしません。
 
-## Node And Playwright Notes
+## Node / Playwright メモ
 
-- Prefer a current stable Node version in GitHub Actions.
-- If the repo uses Playwright, install the browser explicitly in CI.
-- Keep workflow steps separate enough that failed phases are obvious:
+- GitHub Actions では current stable の Node.js を優先します。
+- Playwright を使う repo では CI で browser を明示インストールします。
+- workflow 手順は失敗箇所が分かる粒度に分けます。
   - dependency install
   - browser install
-  - unit and API tests
+  - unit / API tests
   - E2E tests
-- If E2E requires a local web server, check whether sandbox restrictions are the reason for failure before changing application code.
+- E2E でローカル web server が必要な場合は、コード変更前に sandbox 制約の可能性を確認します。
 
-## PR Template
+## PR 本文テンプレート
 
-Use a short body like this and adapt only what changed.
+次のような短い本文をベースにし、変更内容に合わせて調整します。
 
 ```md
 ## Summary
-- add or update GitHub Actions workflows
-- update README to match the repository and CI behavior
-- align review or hook settings if needed
+- GitHub Actions workflow を追加または更新
+- README を repo の構成や CI 挙動に合わせて更新
+- 必要なら hook や保護設定も整合させる
 
 ## Verification
 - `npm test`
@@ -82,24 +83,24 @@ Use a short body like this and adapt only what changed.
 - `gitleaks protect --staged --redact --no-banner`
 
 ## Review Points
-- workflow names match required checks
-- README reflects actual tracked files and behavior
-- review policy changes match branch protection
+- workflow 名が required checks と一致しているか
+- README が実際の tracked files と挙動を反映しているか
+- 保護設定の変更が GitHub 設定と一致しているか
 ```
 
 ## `gh` Command Examples
 
-- Create branch: `git checkout -b <branch-name>`
-- Push branch: `git push -u origin <branch-name>`
-- Create PR: `gh pr create --base main --head <branch-name> --draft --title "<title>" --body-file <file>`
-- Mark ready: `gh pr ready <pr-number>`
-- Check PR status: `gh pr checks <pr-number>`
-- Inspect merge blockers: `gh pr view <pr-number> --json mergeStateStatus,reviewDecision,statusCheckRollup`
-- List workflows: `gh workflow list`
-- List runs for a branch: `gh run list --branch <branch-name>`
-- Merge PR: `gh pr merge <pr-number> --merge`
+- ブランチ作成: `git checkout -b <branch-name>`
+- push: `git push -u origin <branch-name>`
+- PR 作成: `gh pr create --base main --head <branch-name> --draft --title "<title>" --body-file <file>`
+- ready 化: `gh pr ready <pr-number>`
+- PR 状態確認: `gh pr checks <pr-number>`
+- merge blocker 確認: `gh pr view <pr-number> --json mergeStateStatus,reviewDecision,statusCheckRollup`
+- workflow 一覧: `gh workflow list`
+- branch ごとの runs 一覧: `gh run list --branch <branch-name>`
+- PR マージ: `gh pr merge <pr-number> --merge`
 
-## Preferred Commands
+## よく使うコマンド
 
 - `git status --short --branch`
 - `git check-ignore -v <path>`
@@ -111,4 +112,4 @@ Use a short body like this and adapt only what changed.
 
 ## Reference
 
-- See [references/branch-protection.md](references/branch-protection.md) for branch protection payload examples used in this repo.
+- この repo で使う branch protection の例は [references/branch-protection.md](references/branch-protection.md) を参照します。
